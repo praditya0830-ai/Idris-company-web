@@ -1,4 +1,4 @@
-## IDRIS website (company site + waitlist)
+# IDRIS website (company site + waitlist)
 
 Repo ini terpisah dari backend Idris AI dan dari Idris Studio.
 
