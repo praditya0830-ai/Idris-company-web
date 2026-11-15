@@ -1,9 +1,10 @@
-# IDRIS website (company site + waitlist)
+## IDRIS website (company site + waitlist)
 
 Repo ini terpisah dari backend Idris AI dan dari Idris Studio.
 
 - `index.html`: website (Product, Design partners, Investors, Careers, Waitlist).
 - `server.py` + `waitlist.py`: server kecil yang menampilkan website dan menyimpan pendaftar waitlist. Hanya pakai Python standar, tanpa library tambahan.
+- `admin_page.py`: halaman admin (tabel pendaftar + tombol unduh CSV), dilindungi token.
 - `tests/test_waitlist.py`: tes penyimpanan, statistik, ekspor, dan hapus data.
 
 ## Pasang di Render (sekali)
@@ -22,8 +23,10 @@ Repo ini terpisah dari backend Idris AI dan dari Idris Studio.
 Website langsung tampil di `https://idris-website.onrender.com/`. GitHub Pages tidak wajib. Kalau tetap ingin GitHub Pages, aktifkan Pages di repo ini; form tetap mengirim ke server Render di atas.
 
 ## Melihat pendaftar
+- Halaman admin (tabel + tombol unduh CSV): `https://idris-website.onrender.com/admin?token=TOKEN`
 - Ringkasan: `https://idris-website.onrender.com/waitlist/stats?token=TOKEN`
 - Semua data (CSV): `https://idris-website.onrender.com/waitlist/export.csv?token=TOKEN`
+- Hapus satu orang: `POST /waitlist/delete` dengan `{"token":"…","email":"…"}`
 
 ## Tanpa server (alternatif gratis)
 Kalau tidak mau membayar server, ganti form dengan Google Forms/Tally → Google Sheets. Minta tim solver menyambungkannya.
