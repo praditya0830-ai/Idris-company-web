@@ -10,6 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit, parse_qs
 
 import waitlist
+import admin_page
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PORT = int(os.environ.get("PORT", 8000))
@@ -72,6 +73,14 @@ class Handler(BaseHTTPRequestHandler):
                 csv_text = waitlist.export_csv(q.get("token"), q.get("include_test") == "1")
                 return self._send(200, csv_text.encode("utf-8"), "text/csv; charset=utf-8",
                                   {"Content-Disposition": 'attachment; filename="idris-waitlist.csv"'})
+            if u.path == "/admin":
+                try:
+                    rows = waitlist.signups(q.get("token"), q.get("include_test") == "1")
+                except waitlist.WaitlistError as e:
+                    html_err = admin_page.render_error(e.status, str(e)).encode("utf-8")
+                    return self._send(e.status, html_err, "text/html; charset=utf-8")
+                page = admin_page.render(rows, q.get("token") or "", q.get("include_test") == "1")
+                return self._send(200, page.encode("utf-8"), "text/html; charset=utf-8", {"Cache-Control": "no-store"})
             return self._send(404, {"success": False, "error": "not found"})
         except waitlist.WaitlistError as e:
             return self._send(e.status, {"success": False, "error": str(e)})
