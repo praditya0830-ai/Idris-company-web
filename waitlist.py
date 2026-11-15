@@ -171,6 +171,15 @@ def export_csv(token, include_test=False):
     return buf.getvalue()
 
 
+def signups(token, include_test=False):
+    """The stored sign-ups for the admin page, newest last, exactly as exported to CSV."""
+    _authorised(token)
+    con = _connect()
+    rows = _rows(con, include_test)
+    con.close()
+    return rows
+
+
 def stats(token, now=None):
     """Weekly numbers for Arya, exactly as stored: test sign-ups excluded, nothing rounded."""
     _authorised(token)
