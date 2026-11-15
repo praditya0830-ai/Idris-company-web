@@ -76,13 +76,42 @@ class Handler(BaseHTTPRequestHandler):
         except waitlist.WaitlistError as e:
             return self._send(e.status, {"success": False, "error": str(e)})
 
+    def _read_body(self, limit=20000):
+        """Read the request body, however the proxy in front of us framed it.
+
+        Proxies (Cloudflare, Render, preview tunnels) may forward a POST with
+        Transfer-Encoding: chunked and no Content-Length. Reading only
+        Content-Length then yields an empty body and every sign-up is rejected
+        as 'missing fields', so handle both framings.
+        """
+        if "chunked" in (self.headers.get("Transfer-Encoding") or "").lower():
+            out, total = [], 0
+            while True:
+                line = self.rfile.readline(65536).strip()
+                if not line:
+                    break
+                try:
+                    size = int(line.split(b";")[0], 16)
+                except ValueError:
+                    break
+                if size <= 0:
+                    self.rfile.readline(65536)
+                    break
+                total += size
+                if total > limit:
+                    break
+                out.append(self.rfile.read(size))
+                self.rfile.readline(65536)
+            return b"".join(out)
+        n = min(int(self.headers.get("Content-Length") or 0), limit)
+        return self.rfile.read(n) if n else b""
+
     def do_POST(self):
         path = urlsplit(self.path).path
         if path not in ("/waitlist", "/visit", "/waitlist/delete"):
             return self._send(404, {"success": False, "error": "not found"})
         try:
-            n = min(int(self.headers.get("Content-Length", 0)), 20000)
-            params = json.loads((self.rfile.read(n) if n else b"{}").decode("utf-8") or "{}")
+            params = json.loads(self._read_body().decode("utf-8") or "{}")
             if not isinstance(params, dict):
                 raise ValueError("body must be a JSON object")
         except Exception as e:
