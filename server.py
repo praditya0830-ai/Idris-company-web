@@ -49,6 +49,19 @@ class Handler(BaseHTTPRequestHandler):
             if u.path in ("/", "/index.html"):
                 with open(os.path.join(HERE, "index.html"), "rb") as fh:
                     return self._send(200, fh.read(), "text/html; charset=utf-8")
+            if u.path.startswith("/assets/"):
+                rel = os.path.normpath(u.path[len("/assets/"):])
+                if rel.startswith("..") or os.path.isabs(rel):
+                    return self._send(404, {"success": False, "error": "not found"})
+                fp = os.path.join(HERE, "assets", rel)
+                if not os.path.isfile(fp):
+                    return self._send(404, {"success": False, "error": "not found"})
+                ext = rel.rsplit(".", 1)[-1].lower()
+                ctype = {"css": "text/css; charset=utf-8", "js": "application/javascript; charset=utf-8",
+                         "svg": "image/svg+xml", "png": "image/png", "webp": "image/webp",
+                         "woff2": "font/woff2"}.get(ext, "application/octet-stream")
+                with open(fp, "rb") as fh:
+                    return self._send(200, fh.read(), ctype)
             if u.path == "/health":
                 return self._send(200, {"service": "idris-website", "status": "ok", "waitlist": waitlist.status()})
             if u.path == "/waitlist/options":
