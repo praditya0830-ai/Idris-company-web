@@ -36,6 +36,7 @@ p{margin:0}
 .eyebrow b{color:var(--cyan);font-weight:500}
 .skip{position:absolute;left:-9999px;top:0;background:var(--cyan);color:var(--cyan-ink);padding:10px 16px;z-index:200}
 .skip:focus{left:8px;top:8px}
+#top,#platform,#capabilities,#partners,#faq,#waitlist,#privacy{scroll-margin-top:88px}
 
 /* ---------- nav ---------- */
 .nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);background:rgba(9,9,11,.72);border-bottom:1px solid transparent;transition:border-color .25s ease,background .25s}
@@ -68,7 +69,7 @@ p{margin:0}
 /* ---------- hero ---------- */
 .hero{position:relative;z-index:1;padding:clamp(38px,6vw,76px) 0 clamp(40px,5vw,64px)}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:clamp(28px,4vw,56px);align-items:center}
-h1{font-size:clamp(2.15rem,5.1vw,4.05rem);letter-spacing:-.035em;line-height:1.03;font-weight:600}
+h1{font-size:clamp(2.05rem,3.9vw,3rem);letter-spacing:-.032em;line-height:1.06;font-weight:600}
 h1 em{font-style:normal;color:var(--cyan)}
 .hero-sub{margin-top:22px;color:var(--muted);font-size:clamp(15px,1.35vw,17px);max-width:33em;line-height:1.62}
 .hero-sub b{color:#D6D8DE;font-weight:500}
@@ -117,7 +118,7 @@ h1 em{font-style:normal;color:var(--cyan)}
 .band-cell{padding:26px clamp(20px,3vw,36px);text-align:center}
 .band-cell + .band-cell{border-left:1px solid var(--line-soft)}
 .band-k{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#5E5E6A;margin-bottom:8px}
-.band-cell p{font-size:clamp(15px,1.6vw,19px);letter-spacing:-.01em}
+.band-cell p{font-size:clamp(15px,1.6vw,19px);letter-spacing:-.01em;text-wrap:balance;max-width:34ch;margin:0 auto}
 .band-cell.new p{color:#DDE0E6}
 .band-cell.new .band-k{color:rgba(0,229,255,.7)}
 
@@ -286,9 +287,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);padding
 .foot-links{margin-left:auto;display:flex;gap:22px}
 .foot-links a:hover{color:var(--text)}
 
-/* reveal */
-.rv{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
-.rv.in{opacity:1;transform:none}
+/* reveal: motion only, content is never hidden (crawlers, print, anchor jumps) */
+.rv{transform:translateY(10px);transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+.rv.in{transform:none}
 
 /* responsive */
 @media (max-width:1000px){
@@ -297,14 +298,16 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);padding
   .section-head{grid-template-columns:1fr;align-items:start}
   .block{grid-template-columns:1fr;gap:22px}
   .faq-grid{grid-template-columns:1fr;gap:20px}
-  .partner{grid-template-columns:1fr;align-items:start}
+  .partner{grid-template-columns:1fr;align-items:start;justify-items:start}
+  .partner .btn{width:auto}
   .road{grid-template-columns:1fr}
 }
-@media (max-width:880px){
+@media (max-width:760px){
   .nav-links{display:none}
   .nav-toggle{display:block}
   .nav-in{gap:12px;height:64px}
-  .nav .btn-ghost{margin-left:0}
+  .nav .btn-ghost{margin-left:auto}
+  .nav-toggle{margin-left:0}
 }
 @media (max-width:760px){
   .hero{padding-top:30px}
@@ -328,5 +331,5 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);padding
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .rv{opacity:1;transform:none}
+  .rv{transform:none}
 }
